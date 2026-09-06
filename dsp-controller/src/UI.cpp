@@ -85,7 +85,7 @@ void UI::formatItemValue(uint8_t idx, char *out, uint8_t outLen) {
     char num[12];
 
     if (isEqItem(idx, band, field)) {
-        const EqBand &b = _s.eq[band];
+        EqBand b = _s.eq[band]; // cópia: campos de struct "packed" podem não estar alinhados
         if (field == 0) {
             snprintf(out, outLen, "%d Hz", (int)lroundf(b.freqHz));
         } else if (field == 1) {
@@ -304,7 +304,10 @@ void UI::adjustItem(int16_t steps) {
 
     uint8_t band, field;
     if (isEqItem((uint8_t)_menuIndex, band, field)) {
-        EqBand &b = _s.eq[band];
+        // Copia local: `eq[]` fica dentro de uma struct "packed", então
+        // seus campos podem não estar alinhados na memória — evitamos
+        // criar uma referência direta a eles e regravamos o valor no final.
+        EqBand b = _s.eq[band];
         if (field == 0) {
             b.freqHz = stepFrequency(b.freqHz, steps);
         } else if (field == 1) {
@@ -312,6 +315,7 @@ void UI::adjustItem(int16_t steps) {
         } else {
             b.q = clampf(b.q + steps * 0.05f, 0.30f, 10.0f);
         }
+        _s.eq[band] = b;
         applyItem((uint8_t)_menuIndex);
         return;
     }

@@ -17,7 +17,12 @@ struct EqBand {
     float q;
 };
 
-struct Settings {
+// "packed" para não depender de regras de alinhamento/padding do
+// compilador de cada plataforma (o cálculo do CRC8 em Settings.cpp
+// hashea os bytes crus da struct; com padding entre os campos — que
+// varia entre o avr-gcc real e um g++ de host usado no simulador — o
+// CRC ficaria inconsistente entre gravação e leitura).
+struct __attribute__((packed)) Settings {
     uint8_t magic;      // marcador de struct válida
     uint8_t version;    // versão do layout, para invalidar EEPROM antiga
 

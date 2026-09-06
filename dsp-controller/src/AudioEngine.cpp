@@ -27,7 +27,7 @@ void AudioEngine::applyCrossover(const Settings &s) {
 void AudioEngine::applyEqBand(const Settings &s, uint8_t bandIndex) {
     if (bandIndex >= EQ_NUM_BANDS) return;
     double coeffs[5];
-    const EqBand &band = s.eq[bandIndex];
+    EqBand band = s.eq[bandIndex]; // cópia: campos de struct "packed" podem não estar alinhados
     biquadPeakingEQ(band.freqHz, band.q, band.gainDb, DSP_SAMPLE_RATE_HZ, coeffs);
 
     for (uint8_t ch = 0; ch < NUM_CH; ch++) {

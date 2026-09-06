@@ -2,6 +2,7 @@
 #include "Config.h"
 #include <EEPROM.h>
 #include <string.h>
+#include <stddef.h>
 
 #define SETTINGS_MAGIC    0xA5
 #define SETTINGS_VERSION  1
@@ -52,7 +53,7 @@ bool settingsLoad(Settings &s) {
         return false;
     }
 
-    uint8_t expected = crc8((const uint8_t *)&s, sizeof(s) - sizeof(s.crc));
+    uint8_t expected = crc8((const uint8_t *)&s, offsetof(Settings, crc));
     if (expected != s.crc) {
         settingsSetDefaults(s);
         return false;
@@ -62,7 +63,7 @@ bool settingsLoad(Settings &s) {
 
 void settingsSave(const Settings &s) {
     Settings toSave = s;
-    toSave.crc = crc8((const uint8_t *)&toSave, sizeof(toSave) - sizeof(toSave.crc));
+    toSave.crc = crc8((const uint8_t *)&toSave, offsetof(Settings, crc));
     EEPROM.put(SETTINGS_EEPROM_ADDR, toSave);
 }
 

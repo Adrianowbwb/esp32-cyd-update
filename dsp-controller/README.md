@@ -153,6 +153,22 @@ ATmega328PB), selecione a placa "ATmega328PB", 16 MHz externo, e copie o
 conteúdo de `include/` e `src/` para uma pasta de sketch (renomeie
 `src/main.cpp` para `dsp_controller.ino`).
 
+## Simulador de terminal (sem hardware)
+
+Para testar a lógica de menu/EQ/crossover/delay/persistência sem precisar
+de ATmega, encoder, LCD ou DSP físicos:
+
+```bash
+cd sim
+./build.sh
+./dsp_sim
+```
+
+Roda a mesma UI/AudioEngine/Biquad/Settings do firmware real, com o LCD
+virando uma caixinha no terminal, o encoder virando teclado e a EEPROM
+virando um arquivo local. Não simula o áudio dentro do ADAU1701 — só a
+lógica de controle. Detalhes em `sim/README.md`.
+
 ## Estrutura do código
 
 ```
